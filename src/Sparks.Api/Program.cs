@@ -1,9 +1,7 @@
 using Carter;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Sparks.Api.Database;
 using Sparks.Api.Features.Users;
-using Sparks.Api.Options;
 using Sparks.Api.Pipelines;
 using Sparks.SupabaseClient;
 
@@ -17,14 +15,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddOptions();
 builder.Services.AddScoped<UserPoolManagerService>();
-builder.Services.AddScoped(sp =>
-{
-    var opts = new SupabaseClientOptions();
-    builder.Configuration.GetSection(nameof(SupabaseClientOptions)).Bind(opts);
- 
-    return new SupabaseClient(opts.ProjectUrl, opts.PublicKey);
-});
-builder.Services.AddOptions<SupabaseClientOptions>();
+builder.Services.AddSupaBaseClient(builder.Configuration);
 builder.Services.AddCarter();
 builder.Services.AddMediatR(o =>
 {
@@ -34,7 +25,7 @@ builder.Services.AddMediatR(o =>
 });
 builder.Services.AddDbContextFactory<SparksDbContext>((sp,o) =>
 {
-    o.UseNpgsql(configuration.GetSection("ProjectUrl").Value);
+    o.UseNpgsql(configuration["SupabaseClientOptions:ConnectionString"]);
     o.AddInterceptors(new DomainEventInterceptor(sp));
 });
 

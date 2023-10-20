@@ -31,4 +31,8 @@
       <ProjectReference Include="..\Sparks.SupabaseClient\Sparks.SupabaseClient.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Options\" />
+    </ItemGroup>
+
 </Project>

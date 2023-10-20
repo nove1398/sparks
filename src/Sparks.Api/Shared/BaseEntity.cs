@@ -3,7 +3,7 @@ using Postgrest.Models;
 
 namespace Sparks.Api.Shared;
 
-public abstract class BaseEntity : BaseModel
+public abstract class BaseEntity 
 {
     public Guid Id { get; protected set; }
     public DateTime CreatedAtUtc { get; protected set; }
@@ -11,9 +11,9 @@ public abstract class BaseEntity : BaseModel
 
     public IReadOnlyList<IDomainEvent> GetDomainEvents() => _domainEvents.AsReadOnly();
 
-    public void ClearDomainEvents() => _domainEvents.Clear();
+    protected void ClearDomainEvents() => _domainEvents.Clear();
 
-    public void AddDomainEvent(IDomainEvent domainEvent)
+    protected void AddDomainEvent(IDomainEvent domainEvent)
     {
         _domainEvents.Add(domainEvent);
     }

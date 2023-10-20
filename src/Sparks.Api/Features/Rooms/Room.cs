@@ -13,10 +13,8 @@ public class Room : BaseEntity
     public int Capacity { get; private set; }
     public Guid HostUserId { get; private set; }
     public Guid MatchedUserId { get; private set; }
-    private Room()
-    {
-        
-    }
+    
+    private Room() { }
 
     public static Room Create(string name, Guid hostId, Guid matchedUserId, int capacity, PrivacyTypes privacyType, string? venue, int validForMinutes)
     {

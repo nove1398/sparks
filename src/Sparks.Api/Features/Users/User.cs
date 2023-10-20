@@ -14,7 +14,7 @@ public class User : BaseEntity
     public int Age { get; private set; }
     public GenderTypes Gender { get; private set; }
     public bool IsAccountActive { get; private set; }
-    public double Height { get; private set; }
+    public int HeightInCm { get; private set; }
     public StarSignTypes StarSign { get; private set; }
     public ICollection<UserPhoto> UserPhotos { get; private set; } = new List<UserPhoto>();
     public ICollection<Interest> Interests { get; private set; } = new List<Interest>();
