@@ -1,29 +1,37 @@
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
+using Sparks.Api.Shared;
 
 namespace Sparks.Api.Pipelines;
 
 public class ValidationPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>
+    where TRequest : ICommand<TResponse>
 {
-    private readonly IEnumerable<IValidator<TRequest>> _validators;
-    private readonly IValidator<TRequest> _validator;
-    public ValidationPipelineBehavior(IEnumerable<IValidator<TRequest>> validators, IValidator<TRequest> validator)
+    private readonly IEnumerable<IValidator<TRequest>>? _validators;
+    public ValidationPipelineBehavior(IEnumerable<IValidator<TRequest>>? validators)
     {
         _validators = validators;
-        _validator = validator;
     }
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        //var validationResults = await Task.WhenAll(_validators.Select(validator => validator.ValidateAsync(request, cancellationToken)));
-        ValidationResult? validationResults = await _validator.ValidateAsync(request, cancellationToken);
-
-        if (!validationResults.IsValid)
+        if (_validators is null || !_validators.Any())
         {
-            throw new ValidationException(validationResults.Errors);
+            return await next();
         }
+        
+        var validationFailures = _validators
+            .Select(validator => validator.Validate(request))
+            .SelectMany(validationResult => validationResult.Errors)
+            .Where(validationFailure => validationFailure != null)
+            .ToList();
+
+        if (validationFailures.Any())
+        {
+            throw new ValidationException("validationFailures");
+        }
+
 
 
         return await next();

@@ -11,21 +11,28 @@ public class User : BaseEntity
     public string DisplayName { get; private set; } = string.Empty;
     public string Email { get; private set; } = string.Empty;
     public string Country { get; private set; } = string.Empty;
-    public int Age { get; private set; }
+    public int? Age { get; private set; }
     public GenderTypes Gender { get; private set; }
     public bool IsAccountActive { get; private set; }
-    public int HeightInCm { get; private set; }
-    public StarSignTypes StarSign { get; private set; }
+    public int? HeightInCm { get; private set; }
+    public StarSignTypes? StarSign { get; private set; }
     public ICollection<UserPhoto> UserPhotos { get; private set; } = new List<UserPhoto>();
     public ICollection<Interest> Interests { get; private set; } = new List<Interest>();
     
     private User(){}
     
-    public static User Create()
+    public static User Create(Guid id, string email, string country, int? age, int? height, GenderTypes gender, StarSignTypes? starSign)
     {
         var newUser = new User()
         {
-
+            Id = id,
+            Email = email,
+            UserName = email,
+            Gender = gender,
+            StarSign = starSign,
+            HeightInCm = height,
+            Age = age,
+            IsAccountActive = true
         };
         return newUser;
     }

@@ -1,4 +1,5 @@
 using Carter;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Sparks.Api.Database;
 using Sparks.Api.Features.Users;
@@ -13,6 +14,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddOptions();
 builder.Services.AddScoped<UserPoolManagerService>();
 builder.Services.AddSupaBaseClient(builder.Configuration);

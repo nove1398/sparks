@@ -42,7 +42,7 @@ public class SupabaseClient
         _client = new Client(projectUrl, projectKey, options);
     }
 
-    public async Task Init()
+    private async Task Init()
     {
         _logger.LogInformation("SupabaseClient initialized");
         await _client.InitializeAsync();
@@ -57,7 +57,21 @@ public class SupabaseClient
                                     Data = metaData,
                                     RedirectTo = "/home"
                                 });
-
+        if (newSession is null)
+        {
+            _logger.LogError("Failed to sign up account");
+        }
         return newSession;
+    }
+
+    public async Task<Session?> AuthenticateUserAccount(string email, string password)
+    {
+       Session? session = await _client.Auth.SignIn(email,password);
+       return session;
+    }
+
+    public async Task SignOutAccount()
+    {
+        await _client.Auth.SignOut();
     }
 }

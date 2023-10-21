@@ -5,43 +5,47 @@ using Supabase.Gotrue;
 
 namespace Sparks.Api.Features.Users;
 
-internal sealed class CreateUserCommand : ICommand
+public sealed class CreateUserCommand : ICommand<Result<Session?>>
 {
     public GenderTypes Gender { get; init; }
 }
 
-internal sealed class CreateUserCommandHandler : IRequestHandler<CreateUserCommand>
+public sealed class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Result<Session?>>
 {
+    private readonly SupabaseClient.SupabaseClient _supabaseClient;
     private readonly ILogger<CreateUserCommandHandler> _logger;
-    public CreateUserCommandHandler(ILogger<CreateUserCommandHandler> logger)
+    public CreateUserCommandHandler(ILogger<CreateUserCommandHandler> logger, SupabaseClient.SupabaseClient supabaseClient)
     {
         _logger = logger;
+        _supabaseClient = supabaseClient;
     }
     
-    public async Task Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Session?>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Create user command!");
-        await Task.CompletedTask;
+        Session? createdSession = await _supabaseClient.CreateUserAccount("nove1398@yahoo.com","mypassword", new Dictionary<string, object>()
+        {
+            {"location", "Jamaica"}
+        });
+        // Create local user 
+        return Result<Session?>.Success(createdSession);
     }
 }
 
 
 public sealed class CreateUserModule : ICarterModule
 {
-    private readonly SupabaseClient.SupabaseClient _supabaseClient;
-    public CreateUserModule(SupabaseClient.SupabaseClient supabaseClient)
+    public CreateUserModule()
     {
-        _supabaseClient = supabaseClient;
+       
     }
     
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("/users", async () =>
+        app.MapPost("/users", async (ISender mediator) =>
         {
-
-           Session? createdSession = await _supabaseClient.CreateUserAccount("nove1398@yahoo.com","mypassword", new Dictionary<string, object>()
+            var createdSession = await mediator.Send(new CreateUserCommand()
             {
-                {"location", "Jamaica"}
+                Gender = GenderTypes.Male
             });
             return Results.Ok(createdSession);
         });

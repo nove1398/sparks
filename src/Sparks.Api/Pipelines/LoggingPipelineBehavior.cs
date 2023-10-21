@@ -16,10 +16,10 @@ public class LoggingPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TR
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         _stopwatch.Start();
-        _logger.LogInformation("Starting request {Request} - {StartTime}", request, _stopwatch.ElapsedMilliseconds);
+        _logger.LogInformation("Starting request [{Request}] - {StartTime}ms", typeof(TRequest).Name, _stopwatch.ElapsedMilliseconds);
         TResponse response = await next();
         _stopwatch.Stop();
-        _logger.LogInformation("Done processing request {Request} - {EndTime}", request, _stopwatch.ElapsedMilliseconds);
+        _logger.LogInformation("Done processing request [{Request}] - {EndTime}ms", typeof(TRequest).Name, _stopwatch.ElapsedMilliseconds);
         return response;
     }
 }

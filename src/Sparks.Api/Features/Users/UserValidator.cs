@@ -2,10 +2,10 @@ using FluentValidation;
 
 namespace Sparks.Api.Features.Users;
 
-public class UserValidator : AbstractValidator<User>
+public class UserValidator : AbstractValidator<CreateUserCommand>
 {
     public UserValidator()
     {
-        RuleFor(x => Enum.GetValues<GenderTypes>().Contains(x.Gender));
+      
     }
 }
